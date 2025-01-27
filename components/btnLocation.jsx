@@ -3,7 +3,7 @@ import React from 'react';
 import Icon from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/constants/Colors';
 
-export default function BtnLocation({...props}) {
+export default function BtnLocation({ ...props }) {
 	return (
 		<TouchableOpacity style={styles.locationButton} {...props}>
 			<View style={styles.iconContainer}>
@@ -29,5 +29,5 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
-	}
+	},
 });
