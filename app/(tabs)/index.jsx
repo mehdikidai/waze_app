@@ -3,8 +3,9 @@ import { View, StyleSheet, Text } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import AppSetup from '@/components/AppSetup';
 import { Colors } from '@/constants/Colors';
-import useLocation from "@/hooks/useLocation"
+import useLocation from '@/hooks/useLocation';
 import BtnLocation from '@/components/btnLocation';
+import CUSTOM_MAP_STYLE from "@/data/themeMap"
 
 const INITIAL_REGION = {
 	latitude: 48.866667,
@@ -21,14 +22,12 @@ const markers = [
 	{ latitude: 34.04, longitude: -118.29 },
 ];
 
-const Page = () => {
 
+const Page = () => {
 	const mapRef = useRef(null);
 	const { location, errorMsg } = useLocation();
 
-
 	const goLocation = () => {
-
 		if (location) {
 			mapRef.current?.animateCamera(
 				{
@@ -44,16 +43,15 @@ const Page = () => {
 
 	return (
 		<AppSetup>
-
 			<View style={styles.container}>
-
-				{ location && <BtnLocation onPress={goLocation}/> }
+				{location && <BtnLocation onPress={goLocation} />}
 
 				<MapView
 					style={styles.map}
 					provider={PROVIDER_GOOGLE}
 					initialRegion={INITIAL_REGION}
 					ref={mapRef}
+					customMapStyle={CUSTOM_MAP_STYLE}
 				>
 					{markers.map((marker, index) => (
 						<Marker
@@ -67,7 +65,6 @@ const Page = () => {
 				</MapView>
 
 				{errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
-
 			</View>
 		</AppSetup>
 	);
