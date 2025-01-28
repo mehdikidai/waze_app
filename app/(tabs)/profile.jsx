@@ -1,4 +1,14 @@
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import {
+	View,
+	Text,
+	StyleSheet,
+	Image,
+	Dimensions,
+	ScrollView,
+	TextInput,
+	TouchableOpacity,
+	Alert,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import AppSetup from '@/components/AppSetup';
 import AppLoading from '@/components/AppLoading';
@@ -7,6 +17,7 @@ import mkWait from 'mk_wait';
 import { Colors } from '@/constants/Colors';
 import InputBox from '@/components/InputBox';
 import Icon from '@expo/vector-icons/FontAwesome6';
+import Line from '@/components/Line';
 
 const SPACE = 15;
 
@@ -33,6 +44,12 @@ export default function Profile() {
 	const handleEmail = (e) => setEmailForm(e);
 	const handlePhone = (e) => setPhoneForm(e);
 
+	const handleLogout = () => {
+		Alert.alert('Logout', 'nta drti logout daba nod 3la slamtek', [
+			{ text: 'safi', onPress: () => console.log('logout') },
+		]);
+	};
+
 	if (loading) {
 		return <AppLoading />;
 	}
@@ -48,7 +65,7 @@ export default function Profile() {
 						]}
 					>
 						<View style={[styles.boxOne]}>
-							<View style={[styles.boxIcon,{backgroundColor:Colors.tint}]}>
+							<View style={[styles.boxIcon, { backgroundColor: Colors.tint }]}>
 								<Icon name="check" size={14} color="#fff" />
 							</View>
 							<View
@@ -83,9 +100,20 @@ export default function Profile() {
 						<InputBox placeholder="Phone">
 							<TextInput style={styles.inputStyle} onChangeText={handlePhone} value={phoneForm} />
 						</InputBox>
+
 						<TouchableOpacity>
 							<View style={[styles.btn, { backgroundColor: Colors.tint }]}>
 								<Text style={[styles.textBtn, { color: Colors.text }]}>{'Update Profile'}</Text>
+							</View>
+						</TouchableOpacity>
+					</View>
+
+					<Line space={SPACE} />
+
+					<View style={{ marginBlock: 10, marginInline: SPACE }}>
+						<TouchableOpacity onPress={handleLogout}>
+							<View style={[styles.btn, { backgroundColor: '#e54b4b' }]}>
+								<Text style={[styles.textBtn, { color: Colors.text }]}>{'Logout'}</Text>
 							</View>
 						</TouchableOpacity>
 					</View>
@@ -121,8 +149,8 @@ const styles = StyleSheet.create({
 		top: 82,
 		zIndex: 2,
 		borderRadius: 12,
-		alignItems:'center',
-		justifyContent:'center'
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	boxPhoto: {
 		width: 120,
