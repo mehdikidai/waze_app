@@ -18,6 +18,7 @@ import { Colors } from '@/constants/Colors';
 import InputBox from '@/components/InputBox';
 import Icon from '@expo/vector-icons/FontAwesome6';
 import Line from '@/components/Line';
+import { Link } from 'expo-router';
 
 const SPACE = 15;
 
@@ -49,6 +50,7 @@ export default function Profile() {
 			{ text: 'safi', onPress: () => console.log('logout') },
 		]);
 	};
+
 
 	if (loading) {
 		return <AppLoading />;
@@ -121,6 +123,7 @@ export default function Profile() {
 			) : (
 				<View>
 					<Text>login</Text>
+					<Link href={'/login'}>go to login</Link>
 				</View>
 			)}
 		</AppSetup>
