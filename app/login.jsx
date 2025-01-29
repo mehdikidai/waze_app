@@ -1,33 +1,45 @@
 import { View, Text, StyleSheet, Dimensions, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import InputBox from '@/components/InputBox';
 import Btn from '@/components/Btn';
 import axios from 'axios';
+import { storeData } from '@/helper/storage';
+import { router } from 'expo-router';
+import useUserStore from '@/store/userStore';
 
 export default function Login() {
 	const { width: WIDTH } = Dimensions.get('screen');
-	const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+	const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 	const [loading, setLoading] = useState(false);
-
-
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const Store = useUserStore();
 
 	const handleLogin = async () => {
-		console.log(apiUrl);
 		try {
 			setLoading(true);
-			const response = await axios.post(
-				'http://127.0.0.1:8000/api/auth/login',
-				{
-					email: email,
-					password: password,
-				},
-				
-			);
-			console.log(response);
+			const response = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
+
+			await storeData('user', {
+				email: response.data.data.email || 'user',
+				name: response.data.data.name,
+				avatar: response.data.data.avatar,
+				phone: '0605805995',
+				token: response.data.data.token,
+				verified: response.data.data.verified,
+				isLogin: true,
+			});
+
+			Store.updateName(response.data.data.name);
+			Store.updateEmail(response.data.data.email);
+			Store.updateAvatar(response.data.data.avatar);
+			Store.updatePhone(response.data.data?.phone || '0605805995');
+			Store.updateToken(response.data.data.token);
+			Store.updateVerified(response.data.data.verified);
+			Store.updateIsLogin(true);
+
+			router.push({ pathname: '/(tabs)/profile' });
 		} catch (error) {
 			console.log(error);
 		} finally {
@@ -63,7 +75,7 @@ export default function Login() {
 					disabled={loading}
 				/>
 			</View>
-			<StatusBar hidden />
+			{/* <StatusBar hidden /> */}
 		</KeyboardAvoidingView>
 	);
 }

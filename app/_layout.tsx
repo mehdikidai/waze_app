@@ -18,8 +18,9 @@ export default function RootLayout() {
 				store.updateName(user.name ?? '');
 				store.updateEmail(user.email ?? '');
 				store.updatePhone(user.phone ?? '');
+				store.updateToken(user.token ?? '');
 				store.updateAvatar(user.avatar ?? '');
-				store.updateIsLogin(false);
+				store.updateIsLogin(user.isLogin);
 
 			}
 

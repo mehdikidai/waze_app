@@ -19,38 +19,57 @@ import InputBox from '@/components/InputBox';
 import Icon from '@expo/vector-icons/FontAwesome6';
 import Line from '@/components/Line';
 import { Link } from 'expo-router';
+import { clearAllData } from '@/helper/storage';
+import { router } from 'expo-router';
+import axios from 'axios';
+import { Authorization } from '@/helper/auth';
 
 const SPACE = 15;
 
 export default function Profile() {
 	const [loading, setLoading] = useState(true);
-	const { name, email, avatar, phone, isLogin } = useUserStore();
-
+	const { name, email, avatar, phone, token, isLogin, resetUser } = useUserStore();
 	const [nameForm, setNameForm] = useState(name || '');
 	const [emailForm, setEmailForm] = useState(email || '');
 	const [phoneForm, setPhoneForm] = useState(phone || '');
-
 	const { width: windowWidth } = Dimensions.get('window');
+	const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 	useEffect(() => {
 		async function sleep() {
-			await mkWait(5000);
+			await mkWait(1500);
 			setLoading(false);
 		}
 
 		sleep();
 	}, []);
 
-	const handleName = (e) => setNameForm(e);
-	const handleEmail = (e) => setEmailForm(e);
-	const handlePhone = (e) => setPhoneForm(e);
+	const handleLogout = async () => {
+		if (!token) {
+			console.log('No token found');
+			return;
+		}
 
-	const handleLogout = () => {
-		Alert.alert('Logout', 'nta drti logout daba nod 3la slamtek', [
-			{ text: 'safi', onPress: () => console.log('logout') },
-		]);
+		try {
+			const response = await axios.post(
+				`${API_BASE_URL}/auth/logout`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+			if (response.status === 200) {
+				resetUser();
+				await clearAllData();
+				router.push({ pathname: '/' });
+			}
+		} catch (error) {
+			console.log(error);
+			Alert.alert('Error', 'An error occurred while logging out.');
+		}
 	};
-
 
 	if (loading) {
 		return <AppLoading />;
@@ -59,13 +78,8 @@ export default function Profile() {
 	return (
 		<AppSetup>
 			{isLogin ? (
-				<ScrollView style={{ paddingBottom: SPACE }}>
-					<View
-						style={[
-							styles.boxProfile,
-							{ backgroundColor: '#97c6d1', width: windowWidth - SPACE * 2, marginInline: SPACE },
-						]}
-					>
+				<ScrollView>
+					<View style={[styles.boxProfile, { backgroundColor: '#97c6d1', width: windowWidth }]}>
 						<View style={[styles.boxOne]}>
 							<View style={[styles.boxIcon, { backgroundColor: Colors.tint }]}>
 								<Icon name="check" size={14} color="#fff" />
@@ -86,21 +100,19 @@ export default function Profile() {
 							</View>
 						</View>
 
-						<Text style={{ fontSize: 22, color: Colors.text, fontWeight: 800 }}>{name || 'mehdi kidai'}</Text>
+						<Text style={{ fontSize: 22, color: Colors.text, fontWeight: 800 }}>{name}</Text>
 
-						<Text style={{ fontSize: 14, color: Colors.text, opacity: 0.5 }}>
-							{email || 'mehdikidai@gmail.com'}
-						</Text>
+						<Text style={{ fontSize: 14, color: Colors.text, opacity: 0.5 }}>{email}</Text>
 					</View>
 					<View style={{ marginBlock: 20, marginInline: SPACE, gap: 10 }}>
 						<InputBox placeholder="Name">
-							<TextInput style={styles.inputStyle} onChangeText={handleName} value={nameForm} />
+							<TextInput style={styles.inputStyle} onChangeText={setNameForm} value={nameForm} />
 						</InputBox>
 						<InputBox placeholder="Email">
-							<TextInput style={styles.inputStyle} onChangeText={handleEmail} value={emailForm} />
+							<TextInput style={styles.inputStyle} onChangeText={setEmailForm} value={emailForm} />
 						</InputBox>
 						<InputBox placeholder="Phone">
-							<TextInput style={styles.inputStyle} onChangeText={handlePhone} value={phoneForm} />
+							<TextInput style={styles.inputStyle} onChangeText={setPhoneForm} value={phoneForm} />
 						</InputBox>
 
 						<TouchableOpacity>
@@ -132,11 +144,10 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
 	boxProfile: {
-		height: 240,
+		height: 230,
 		alignItems: 'center',
 		justifyContent: 'center',
 		gap: 2,
-		marginTop: 15,
 		borderRadius: 6,
 	},
 	boxOne: {
@@ -168,8 +179,6 @@ const styles = StyleSheet.create({
 		height: 120,
 		objectFit: 'cover',
 	},
-
-	// input
 
 	inputStyle: {
 		borderWidth: 1,
