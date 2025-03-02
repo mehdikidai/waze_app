@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 export const storeData = async <T>(key: string, data: T): Promise<boolean> => {
 	try {
 		const jsonValue = JSON.stringify(data);
@@ -33,6 +34,6 @@ export const clearAllData = async (): Promise<boolean> => {
 		return true;
 	} catch (error) {
 		console.warn('Error while clearing all data:', error);
-		return false;
+		return false;	
 	}
 };
